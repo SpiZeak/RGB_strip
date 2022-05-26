@@ -3,7 +3,10 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <FastLED.h>
 #include <config.h>
+
+CRGB leds[NUM_LEDS];
 
 void setup()
 {
@@ -87,9 +90,22 @@ void setup()
   ArduinoOTA.begin();
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+
+  FastLED.addLeds<TM1829, DATA_PIN, RGB>(leds, NUM_LEDS);
 }
 
 void loop()
 {
   ArduinoOTA.handle();
+  leds[0] = CRGB(0, 0, 255);
+  leds[1] = CRGB(0, 0, 255);
+  leds[2] = CRGB(0, 0, 255);
+  leds[3] = CRGB(0, 0, 255);
+  leds[4] = CRGB(0, 0, 255);
+  leds[5] = CRGB(0, 0, 255);
+  leds[6] = CRGB(0, 0, 255);
+  leds[7] = CRGB(0, 0, 255);
+  FastLED.show();
 }
+
+// Blue Red Green
