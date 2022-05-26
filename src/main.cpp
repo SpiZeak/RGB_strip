@@ -9,17 +9,22 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("Booting");
-  Serial.println("\n\n--- Running project: \"RGB_strip\" --- \n");
+  Serial.println("\n\n--- Running project: \"RGB_strip\" ---");
+  Serial.println("https://github.com/SpiZeak/RGB_strip\n\n");
+
+  Serial.print("Connecting to wifi... ");
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PW);
 
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
-    Serial.println("Connection Failed! Rebooting...");
+    Serial.println("\nConnection Failed! Rebooting...");
     delay(5000);
     ESP.restart();
   }
+
+  Serial.println("Done.");
 
   ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
 
@@ -80,7 +85,6 @@ void setup()
       });
 
   ArduinoOTA.begin();
-  Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }
