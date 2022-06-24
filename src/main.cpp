@@ -10,6 +10,12 @@ CRGB leds[NUM_LEDS];
 
 void setup()
 {
+  FastLED.addLeds<LED_TYPE, DATA_PIN, BRG>(leds, NUM_LEDS);
+  FastLED.setMaxRefreshRate(400);
+  FastLED.setBrightness(100);
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
+  FastLED.show();
+
   Serial.begin(115200);
   Serial.println("Booting");
   Serial.println("\n\n--- Running project: \"RGB_strip\" ---");
@@ -20,17 +26,20 @@ void setup()
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PW);
 
-  while (WiFi.waitForConnectResult() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED)
   {
-    Serial.println("\nConnection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
+    fill_solid(leds, NUM_LEDS, CRGB(0, 136, 255));
+    FastLED.show();
+    delay(500);
+    fill_solid(leds, NUM_LEDS, CRGB::Black);
+    FastLED.show();
+    delay(500);
   }
 
+  FastLED.setBrightness(255);
   Serial.println("Done.");
 
   ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
-
   ArduinoOTA.onStart(
       []()
       {
@@ -90,22 +99,12 @@ void setup()
   ArduinoOTA.begin();
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
-  FastLED.addLeds<TM1829, DATA_PIN, RGB>(leds, NUM_LEDS);
 }
 
 void loop()
 {
   ArduinoOTA.handle();
-  leds[0] = CRGB(0, 0, 255);
-  leds[1] = CRGB(0, 0, 255);
-  leds[2] = CRGB(0, 0, 255);
-  leds[3] = CRGB(0, 0, 255);
-  leds[4] = CRGB(0, 0, 255);
-  leds[5] = CRGB(0, 0, 255);
-  leds[6] = CRGB(0, 0, 255);
-  leds[7] = CRGB(0, 0, 255);
+  fill_solid(leds, NUM_LEDS, CRGB::White);
+  leds[0] = CRGB::Black;
   FastLED.show();
 }
-
-// Blue Red Green
