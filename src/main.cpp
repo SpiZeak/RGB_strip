@@ -6,20 +6,49 @@
 #include <FastLED.h>
 #include <config.h>
 
+int lastDetectorState = LOW;
+int val = 0;
+const unsigned long delayTime = 5e3;
+unsigned long triggerTime = 0;
+
+int lastSerialTime = 0;
+
 CRGB leds[NUM_LEDS];
+
+void triggerStart()
+{
+  Serial.println("Turn LED ON");
+
+  fill_solid(leds, NUM_LEDS, CRGB::White);
+  leds[0] = CRGB::Black;
+
+  lastDetectorState = HIGH;
+  triggerTime = millis();
+}
+
+void triggerEnd()
+{
+  Serial.println("Turn LED OFF");
+
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
+
+  lastDetectorState = LOW;
+}
 
 void setup()
 {
+  Serial.begin(115200);
+  Serial.println("Booting");
+  Serial.println("\n\n--- Running project: \"RGB_strip\" ---");
+  Serial.println("https://github.com/SpiZeak/RGB_strip\n\n");
+
+  pinMode(SENSOR_PIN, INPUT);
+
   FastLED.addLeds<LED_TYPE, DATA_PIN, BRG>(leds, NUM_LEDS);
   FastLED.setMaxRefreshRate(400);
   FastLED.setBrightness(100);
   fill_solid(leds, NUM_LEDS, CRGB::Black);
   FastLED.show();
-
-  Serial.begin(115200);
-  Serial.println("Booting");
-  Serial.println("\n\n--- Running project: \"RGB_strip\" ---");
-  Serial.println("https://github.com/SpiZeak/RGB_strip\n\n");
 
   Serial.print("Connecting to wifi... ");
 
@@ -104,7 +133,27 @@ void setup()
 void loop()
 {
   ArduinoOTA.handle();
-  fill_solid(leds, NUM_LEDS, CRGB::White);
-  leds[0] = CRGB::Black;
+
+  val = digitalRead(SENSOR_PIN);
+
+  if (millis() - lastSerialTime > 1000)
+  {
+    Serial.println(val);
+    lastSerialTime = millis();
+  }
+
+  if (val == HIGH)
+  {
+    triggerStart();
+  }
+
+  if (millis() - triggerTime > delayTime)
+  {
+    if (val == LOW && lastDetectorState == HIGH)
+    {
+      triggerEnd();
+    }
+  }
+
   FastLED.show();
 }
