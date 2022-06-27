@@ -8,7 +8,7 @@
 
 int lastDetectorState = LOW;
 int val = 0;
-const unsigned long delayTime = 5e3;
+const unsigned long delayTime = 300e3;
 unsigned long triggerTime = 0;
 
 int lastSerialTime = 0;
@@ -45,6 +45,8 @@ void setup()
   pinMode(SENSOR_PIN, INPUT);
 
   FastLED.addLeds<LED_TYPE, DATA_PIN, BRG>(leds, NUM_LEDS);
+  FastLED.setCorrection(0xFFB096);
+  // FastLED.setTemperature(Tungsten40W);
   FastLED.setMaxRefreshRate(400);
   FastLED.setBrightness(100);
   fill_solid(leds, NUM_LEDS, CRGB::Black);
